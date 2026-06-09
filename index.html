@@ -119,11 +119,17 @@
       <select id="industry">
         <option value="it">IT・情報通信</option>
         <option value="finance">金融・保険</option>
+        <option value="legal">法律・会計（士業）</option>
         <option value="medical">医療・福祉</option>
         <option value="manu">製造業</option>
+        <option value="const">建設・不動産</option>
+        <option value="transport">運輸・物流</option>
         <option value="retail">卸売・小売</option>
+        <option value="food">飲食・宿泊</option>
         <option value="service">サービス業</option>
+        <option value="media">マスコミ・広告・出版</option>
         <option value="edu">教育・学習支援</option>
+        <option value="agri">農業・林業・漁業</option>
         <option value="govt">公務員・官公庁</option>
         <option value="other">その他</option>
       </select>
@@ -214,7 +220,7 @@
       60:{avg:290,low:180,high:460}, 65:{avg:240,low:160,high:380},
     }
   };
-  const industryAdj = {it:1.18,finance:1.22,medical:1.05,manu:1.02,retail:0.88,service:0.85,edu:0.95,govt:1.0,other:1.0};
+  const industryAdj = {it:1.18,finance:1.22,legal:1.28,medical:1.05,manu:1.02,const:0.98,transport:0.92,retail:0.88,food:0.78,service:0.85,media:1.08,edu:0.95,agri:0.75,govt:1.0,other:1.0};
   const empAdj = {full:1.0,part:0.55,contract:0.78,self:0.95};
 
   function nearestAge(age) {
