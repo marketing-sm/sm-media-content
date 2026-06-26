@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>AI Account Plan ｜ デジタルチラシ</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%2300235d'/><text x='16' y='22' font-size='16' font-weight='800' text-anchor='middle' fill='%23F59E0B' font-family='sans-serif'>A</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#00235d; --navy-light:#2A3D6A; --navy-lighter:#F3F5FA;
+  --amber:#F59E0B; --amber-light:#FEF3C7;
+  --blue:#3B82F6; --blue-light:#DBEAFE;
+  --white:#fff; --bg:#F9FAFB; --line:#E5E7EB; --muted:#6B7280;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--navy);
+  font-family:"Noto Sans JP","Hiragino Sans","Hiragino Kaku Gothic ProN",Meiryo,sans-serif;
+  font-size:15px;line-height:1.7;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer;border:none;background:none;padding:0;color:inherit}
+.container{max-width:640px;margin:0 auto;padding:24px 16px 64px}
+#panel-2 .eyebrow{font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--amber);margin-bottom:6px}
+#panel-2 .page-title{font-size:22px;font-weight:800;line-height:1.4;margin:0 0 6px}
+#panel-2 .page-lead{font-size:13.5px;color:var(--muted);margin:0 0 24px}
+#panel-2 /* progress */
+.progress-wrap{position:sticky;top:0;background:var(--bg);padding:10px 0 14px;z-index:20}
+#panel-2 .progress-meta{display:flex;justify-content:space-between;font-size:11.5px;font-weight:700;color:var(--muted);margin-bottom:6px}
+#panel-2 .progress-bar{height:5px;background:var(--line);border-radius:99px;overflow:hidden}
+#panel-2 .progress-fill{height:100%;background:var(--amber);width:0;transition:width .3s ease;border-radius:99px}
+#panel-2 /* question card — compact meter style */
+.legend{background:var(--navy-lighter);border-radius:10px;padding:12px 14px;margin-bottom:16px}
+#panel-2 .scale-guide{font-size:12.5px;font-weight:700;color:var(--navy);line-height:1.8}
+#panel-2 .scale-core{display:inline-flex;align-items:center;gap:8px;white-space:nowrap}
+#panel-2 .scale-end{flex:0 0 auto}
+#panel-2 .scale-tail{font-weight:400;color:var(--muted);font-size:12px;margin-left:6px}
+#panel-2 .legend .mini{display:inline-flex;gap:5px;flex:0 0 auto;vertical-align:middle}
+#panel-2 .legend .mini i{width:13px;height:13px;border-radius:50%;border:2px solid var(--line);background:var(--white)}
+#panel-2 .legend-note{font-size:11.5px;color:var(--muted);margin-top:7px;line-height:1.5}
+#panel-2 .q-group{margin-bottom:6px}
+#panel-2 .q-group-head{font-size:11px;font-weight:700;letter-spacing:.05em;color:var(--muted);margin:18px 0 8px;display:flex;align-items:center;gap:7px}
+#panel-2 .q-group-head .eng{color:var(--amber)}
+#panel-2 .q-row{display:flex;align-items:center;gap:12px;background:var(--white);border:1px solid var(--line);
+  border-radius:10px;padding:11px 13px;margin-bottom:7px}
+#panel-2 .q-row.answered{border-color:#D6DCEA}
+#panel-2 .q-text{font-size:13px;font-weight:400;line-height:1.45;flex:1;margin:0}
+#panel-2 .q-text b{color:var(--navy);font-weight:700}
+#panel-2 .meter{display:flex;gap:9px;flex:0 0 auto;align-items:center}
+#panel-2 .meter .dot{width:22px;height:22px;border-radius:50%;border:2px solid var(--line);background:var(--white);
+  transition:all .15s;position:relative}
+#panel-2 .meter .dot:hover{border-color:var(--amber)}
+#panel-2 .meter .dot.on{border-color:var(--amber);background:var(--amber);box-shadow:inset 0 0 0 3px var(--white)}
+#panel-2 .meter .dot.on.neg{border-color:var(--muted);background:var(--muted)}
+#panel-2 .submit-row{margin-top:26px;text-align:center}
+#panel-2 .btn-primary{display:inline-block;background:var(--amber);color:var(--white);font-weight:800;font-size:15px;
+  padding:15px 40px;border-radius:99px;transition:opacity .2s}
+#panel-2 .btn-primary:disabled{opacity:.35;cursor:not-allowed}
+#panel-2 .btn-ghost{display:block;margin:14px auto 0;font-size:12.5px;color:var(--muted);text-decoration:underline}
+#panel-2 /* result */
+#result{display:none}
+#panel-2 .result-score{text-align:center;margin:8px 0 4px}
+#panel-2 .result-score .num{font-size:46px;font-weight:800;color:var(--navy);line-height:1}
+#panel-2 .result-score .num span{font-size:20px;color:var(--muted)}
+#panel-2 .result-score .lbl{font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.05em}
+#panel-2 .radar-wrap{display:flex;justify-content:center;margin:6px 0 24px}
+#panel-2 .spotlight{background:var(--navy);color:var(--white);border-radius:14px;padding:24px 20px;margin-bottom:18px;position:relative;overflow:hidden}
+#panel-2 .spotlight::after{content:"";position:absolute;right:-40px;top:-40px;width:160px;height:160px;background:radial-gradient(circle,rgba(245,158,11,.25),transparent 70%)}
+#panel-2 .spot-eyebrow{font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--amber);margin-bottom:10px}
+#panel-2 .spot-title{font-size:21px;font-weight:800;line-height:1.45;margin:0 0 16px;position:relative}
+#panel-2 .spot-block{position:relative}
+#panel-2 .spot-h{font-size:11px;font-weight:700;letter-spacing:.05em;opacity:.65;margin-bottom:4px}
+#panel-2 .spot-p{font-size:14px;line-height:1.65;margin:0 0 14px}
+#panel-2 .spot-arrow{text-align:center;color:var(--amber);font-size:18px;margin:2px 0 10px}
+#panel-2 .spot-cta{display:block;width:100%;background:var(--amber);color:var(--white);font-weight:800;font-size:15px;
+  padding:15px;border-radius:99px;text-align:center;margin-top:18px}
+#panel-2 .others-title{font-size:12px;font-weight:700;color:var(--muted);margin:22px 0 10px;letter-spacing:.03em}
+#panel-2 .acc{background:var(--white);border:1px solid var(--line);border-radius:10px;margin-bottom:8px;overflow:hidden}
+#panel-2 .acc-head{display:flex;align-items:center;gap:12px;width:100%;padding:14px 15px;text-align:left}
+#panel-2 .acc-bar{flex:0 0 64px;height:6px;background:var(--line);border-radius:99px;overflow:hidden}
+#panel-2 .acc-bar i{display:block;height:100%;background:var(--blue);border-radius:99px}
+#panel-2 .acc-name{font-size:13.5px;font-weight:700;flex:1}
+#panel-2 .acc-pct{font-size:12px;font-weight:700;color:var(--muted)}
+#panel-2 .acc-chev{color:var(--muted);transition:transform .2s}
+#panel-2 .acc.open .acc-chev{transform:rotate(180deg)}
+#panel-2 .acc-body{max-height:0;overflow:hidden;transition:max-height .25s ease}
+#panel-2 .acc-body .inner{padding:0 15px 15px;font-size:13px;line-height:1.65;color:var(--navy)}
+#panel-2 .acc-body .inner .state{color:var(--muted)}
+#panel-2 .retry{display:block;margin:24px auto 0;font-size:12.5px;color:var(--muted);text-decoration:underline}
+#panel-3 .eyebrow{font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--amber);margin-bottom:6px}
+#panel-3 .page-title{font-size:22px;font-weight:800;line-height:1.4;margin:0 0 6px}
+#panel-3 .page-lead{font-size:13.5px;color:var(--muted);margin:0 0 28px}
+#panel-3 /* feature card */
+.feat{background:var(--white);border:1px solid var(--line);border-radius:16px;padding:22px 18px 20px;margin-bottom:18px;position:relative;overflow:hidden}
+#panel-3 .feat-no{position:absolute;top:16px;right:18px;font-size:40px;font-weight:800;color:var(--navy-lighter);line-height:1;letter-spacing:-.02em}
+#panel-3 .feat-step{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--amber);margin-bottom:14px}
+#panel-3 /* before -> after */
+.ba{display:flex;align-items:stretch;gap:10px;margin-bottom:18px}
+#panel-3 .before{flex:0 0 30%;background:var(--bg);border:1px dashed var(--line);border-radius:10px;padding:11px 11px;display:flex;flex-direction:column;justify-content:center}
+#panel-3 .before .lbl{font-size:9.5px;font-weight:700;letter-spacing:.05em;color:#A8AFBD;margin-bottom:4px}
+#panel-3 .before .txt{font-size:11.5px;line-height:1.5;color:var(--muted)}
+#panel-3 .ba-arrow{flex:0 0 auto;align-self:center;color:var(--amber);font-size:20px;font-weight:700}
+#panel-3 .after{flex:1;background:var(--navy-lighter);border:1.5px solid var(--blue-light);border-radius:10px;padding:13px 13px;display:flex;flex-direction:column;justify-content:center}
+#panel-3 .after .lbl{font-size:9.5px;font-weight:700;letter-spacing:.05em;color:var(--blue);margin-bottom:4px}
+#panel-3 .after .txt{font-size:14px;font-weight:800;line-height:1.45;color:var(--navy)}
+#panel-3 /* after detail + diagram */
+.feat-body{font-size:12.5px;line-height:1.7;color:var(--muted);margin:0 0 16px}
+#panel-3 .diagram{background:var(--bg);border-radius:12px;padding:18px 14px;display:flex;justify-content:center}
+#panel-3 .diagram svg{width:100%;height:auto;max-width:420px}
+#panel-3 .ph{width:100%;min-height:96px;border:1.5px dashed var(--line);border-radius:10px;background:repeating-linear-gradient(45deg,transparent,transparent 8px,rgba(0,35,93,.02) 8px,rgba(0,35,93,.02) 16px);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;text-align:center;padding:14px}
+#panel-3 .ph-icon{font-size:20px;color:var(--blue);opacity:.5;line-height:1}
+#panel-3 .ph-label{font-size:13px;font-weight:700;color:var(--navy)}
+#panel-3 .ph-note{font-size:10.5px;color:var(--muted)}
+#panel-3 /* next CTA (共通仕様プレビュー) */
+.next-cta{display:block;width:100%;background:var(--amber);color:var(--white);font-weight:800;font-size:15px;
+  padding:16px;border-radius:99px;text-align:center;margin-top:26px}
+#panel-3 .back-btn{display:block;margin:14px auto 0;font-size:12.5px;color:var(--muted);text-decoration:underline}
+#panel-4 .eyebrow{font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--amber);margin-bottom:6px}
+#panel-4 .page-title{font-size:22px;font-weight:800;line-height:1.4;margin:0 0 6px}
+#panel-4 .page-lead{font-size:13.5px;color:var(--muted);margin:0 0 22px}
+#panel-4 /* accordion */
+.acc{background:var(--white);border:1px solid var(--line);border-radius:12px;margin-bottom:12px;overflow:hidden}
+#panel-4 .acc-head{display:flex;align-items:flex-start;gap:12px;width:100%;padding:16px 16px;text-align:left}
+#panel-4 .acc-num{flex:0 0 26px;height:26px;border-radius:7px;background:var(--navy-lighter);color:var(--navy);
+  font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;margin-top:1px}
+#panel-4 .acc-headmain{flex:1;min-width:0}
+#panel-4 .acc-name{font-size:14.5px;font-weight:800;line-height:1.35;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+#panel-4 .acc-oneline{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.5}
+#panel-4 .acc-chev{flex:0 0 auto;color:var(--muted);transition:transform .2s;margin-top:3px}
+#panel-4 .acc.open .acc-chev{transform:rotate(180deg)}
+#panel-4 .acc-body{max-height:0;overflow:hidden;transition:max-height .3s ease}
+#panel-4 .acc-body .inner{padding:2px 16px 18px}
+#panel-4 .acc-desc{font-size:13px;line-height:1.75;color:var(--navy);margin:0 0 14px}
+#panel-4 .demo-point{background:var(--amber-light);border-radius:9px;padding:11px 13px;margin-bottom:16px}
+#panel-4 .demo-point .lbl{font-size:10px;font-weight:800;letter-spacing:.06em;color:var(--amber);margin-bottom:3px}
+#panel-4 .demo-point .txt{font-size:12.5px;line-height:1.6;color:var(--navy)}
+#panel-4 /* carousel */
+.carousel{position:relative}
+#panel-4 .carousel-track{display:flex;align-items:flex-start;overflow-x:auto;scroll-snap-type:x mandatory;gap:10px;
+  scrollbar-width:none;-ms-overflow-style:none;padding-bottom:2px}
+#panel-4 .carousel-track::-webkit-scrollbar{display:none}
+#panel-4 .slide{flex:0 0 100%;scroll-snap-align:center}
+#panel-4 .ph{width:100%;aspect-ratio:16/10;border:1.5px dashed var(--line);border-radius:10px;
+  background:repeating-linear-gradient(45deg,transparent,transparent 8px,rgba(0,35,93,.02) 8px,rgba(0,35,93,.02) 16px);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;padding:16px}
+#panel-4 .ph-icon{font-size:22px;color:var(--blue);opacity:.5}
+#panel-4 .ph-label{font-size:12.5px;font-weight:700;color:var(--navy)}
+#panel-4 .ph-note{font-size:10px;color:var(--muted)}
+#panel-4 .dots{display:flex;justify-content:center;gap:7px;margin-top:11px}
+#panel-4 .dots 
+.dots button.active{background:var(--amber);width:20px;border-radius:99px}
+#panel-4 .swipe-hint{text-align:center;font-size:10.5px;color:var(--muted);margin-top:8px}
+#panel-4 .next-cta{display:block;width:100%;background:var(--amber);color:var(--white);font-weight:800;font-size:15px;
+  padding:16px;border-radius:99px;text-align:center;margin-top:26px}
+#panel-4 .back-btn{display:block;margin:14px auto 0;font-size:12.5px;color:var(--muted);text-decoration:underline}
+
+.tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-bottom:18px;position:sticky;top:0;background:var(--bg);padding:10px 0;z-index:50}
+.tab{padding:9px 2px;border-radius:8px;text-align:center;background:var(--white);border:1px solid var(--line);min-height:50px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;transition:all .15s}
+.tab.active{background:var(--navy);border-color:var(--navy)}
+.tab-num{font-size:10px;font-weight:800;color:var(--muted)}
+.tab.active .tab-num{color:var(--amber)}
+.tab-label{font-size:9.5px;font-weight:700;color:var(--navy);line-height:1.2}
+.tab.active .tab-label{color:var(--white)}
+.panel{display:none}
+.panel.active{display:block}
+.fv-eyebrow{font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--amber);margin:8px 0 10px}
+.fv-title{font-size:25px;font-weight:800;line-height:1.45;margin:0 0 14px}
+.fv-em{color:var(--amber)}
+.fv-product{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.05em;margin-bottom:22px}
+.fv-hero-ph{width:100%;aspect-ratio:16/10;border:1.5px dashed var(--line);border-radius:14px;background:repeating-linear-gradient(45deg,transparent,transparent 8px,rgba(0,35,93,.02) 8px,rgba(0,35,93,.02) 16px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;padding:18px;margin-bottom:24px}
+.fv-hero-ph.small{aspect-ratio:16/7;margin-bottom:0;margin-top:12px}
+.fv-hero-ph .ph-icon{font-size:24px;color:var(--blue);opacity:.5}
+.fv-hero-ph .ph-label{font-size:13px;font-weight:700;color:var(--navy)}
+.fv-hero-ph .ph-note{font-size:10px;color:var(--muted)}
+.orcha-block{background:var(--navy);color:var(--white);border-radius:14px;padding:20px 18px;margin-bottom:8px}
+.orcha-h{font-size:15px;font-weight:800;margin-bottom:8px}
+.orcha-h b{color:var(--amber)}
+.orcha-p{font-size:12.5px;line-height:1.7;margin:0;opacity:.92}
+.next-cta{display:block;width:100%;background:var(--amber);color:var(--white);font-weight:800;font-size:15px;padding:16px;border-radius:99px;text-align:center;margin-top:26px;cursor:pointer}
+.back-btn{display:block;margin:16px auto 0;font-size:12.5px;color:var(--muted);text-decoration:underline;cursor:pointer;text-align:center}
+.cta-card{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:18px 16px;margin-bottom:12px;position:relative}
+.cta-card.primary{border-color:var(--amber);background:var(--amber-light)}
+.cta-tag{position:absolute;top:-9px;left:16px;background:var(--amber);color:var(--white);font-size:10px;font-weight:800;padding:3px 10px;border-radius:99px}
+.cta-title{font-size:15px;font-weight:800;margin-bottom:5px}
+.cta-desc{font-size:12.5px;color:var(--muted);line-height:1.6;margin:0 0 12px}
+.cta-link{font-size:13px;font-weight:800;color:var(--navy)}
+.site-footer{margin-top:40px;padding-top:22px;border-top:1px solid var(--line);text-align:center}
+.site-footer .f1{font-size:13px;font-weight:800;color:var(--navy)}
+.site-footer .f2{font-size:11px;color:var(--muted);margin-top:3px}
+
+
+.fv-fig{width:100%;border-radius:12px;overflow:hidden;border:1px solid var(--line);margin-top:12px;background:#fff}
+.fv-fig img{display:block;width:100%;height:auto}
+#panel-3 .fig,#panel-4 .fig{width:100%;border-radius:10px;overflow:hidden;border:1px solid var(--line);background:#fff}
+#panel-3 .fig img{display:block;width:100%;height:auto}
+#panel-4 .fig img{display:block;width:100%;height:auto}
+#panel-4 .slide .fig img{max-height:360px;object-fit:contain;object-position:top}
+#panel-3 .ph.mini{margin-top:10px;min-height:60px}
+#panel-4 .slide-cap{text-align:center;font-size:11.5px;color:var(--muted);margin-top:8px;font-weight:700}
+
+.fv-logo{margin-bottom:22px}
+.fv-logo img{height:38px;width:auto;display:block}
+</style>
+</head>
+<body>
+<div class="container">
+  <nav class="tabs">
+    <button class="tab active" onclick="switchTab(1)" data-tab="1"><span class="tab-num">01</span><span class="tab-label">概要</span></button>
+    <button class="tab" onclick="switchTab(2)" data-tab="2"><span class="tab-num">02</span><span class="tab-label">課題チェック</span></button>
+    <button class="tab" onclick="switchTab(3)" data-tab="3"><span class="tab-num">03</span><span class="tab-label">特徴</span></button>
+    <button class="tab" onclick="switchTab(4)" data-tab="4"><span class="tab-num">04</span><span class="tab-label">機能</span></button>
+    <button class="tab" onclick="switchTab(5)" data-tab="5"><span class="tab-num">05</span><span class="tab-label">予約・資料</span></button>
+  </nav>
+  <section class="panel active" id="panel-1">
+  <div class="fv-eyebrow">アカウント営業 × インテント × AI</div>
+  <h1 class="fv-title">深い顧客理解から、<br>重要アカウントを<span class="fv-em">逃さない</span>営業へ。</h1>
+  <div class="fv-logo"><img src="data:image/webp;base64,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" alt="AI Account Plan" /></div>
+  <div class="fv-hero-ph">
+    <span class="ph-icon">▣</span>
+    <span class="ph-label">AI Account Plan 概要図（1枚絵）</span>
+    <span class="ph-note">製品概要ビジュアル 差し込み予定</span>
+  </div>
+  <div class="orcha-block">
+    <div class="orcha-h">エージェントオーケストレーション <b>by Orcha（オルカ）</b></div>
+    <p class="orcha-p">コンテキストを起点に、複数のAIエージェントが役割を分担し、同時並列で処理を実行。リサーチの浅さやタスクの中断を抑え、網羅性と再現性の高いアウトプットを実現します。思考整理から意思決定、資料作成までを一体で支援し、分断された業務プロセスをつなぎます。</p>
+    <div class="fv-hero-ph small">
+      <span class="ph-icon">▣</span>
+      <span class="ph-label">Orcha 概要図</span>
+      <span class="ph-note">差し込み予定</span>
+    </div>
+  </div>
+  <a class="next-cta" onclick="switchTab(2)">まずは自社の状況をチェック →</a>
+</section>
+  <section class="panel" id="panel-2">
+
+  <!-- ===== 設問パート ===== -->
+  <div id="quiz">
+    <div class="eyebrow">SELF-CHECK</div>
+    <h1 class="page-title">重要アカウントを見極め、<br>勝ち切れていますか？</h1>
+    <p class="page-lead">アカウント営業を強くする5つの視点で診断します。<br>10問・所要 約1分</p>
+
+    <div class="progress-wrap">
+      <div class="progress-meta"><span id="p-count">回答済み 0 / 10</span><span id="p-pct">0%</span></div>
+      <div class="progress-bar"><div class="progress-fill" id="p-fill"></div></div>
+    </div>
+
+    <div class="legend">
+      <div class="scale-guide">
+        <span class="scale-core">
+          <span class="scale-end">そう思わない</span>
+          <span class="mini"><i></i><i></i><i></i></span>
+          <span class="scale-end">そう思う</span>
+        </span>
+        <span class="scale-tail">の3段階で選んでください</span>
+      </div>
+      <div class="legend-note">未回答は「そう思わない」として扱われます。途中でも結果を見られます。</div>
+    </div>
+
+    <div id="questions"></div>
+
+    <div class="submit-row">
+      <button class="btn-primary" id="submitBtn" onclick="showResult()">診断結果を見る</button>
+      <button class="btn-ghost" onclick="skipToFeatures()">診断をスキップして機能を見る</button>
+    </div>
+  </div>
+
+  <!-- ===== 結果パート ===== -->
+  <div id="result">
+    <div class="eyebrow">DIAGNOSIS</div>
+    <h1 class="page-title">あなたの「勝ち切る力」診断結果</h1>
+
+    <div class="result-score">
+      <div class="num" id="totalScore">0<span>/20</span></div>
+      <div class="lbl">仕組み化スコア</div>
+    </div>
+
+    <div class="radar-wrap" id="radarWrap"></div>
+
+    <div id="spotlight"></div>
+
+    <div class="others-title">▽ 他の視点の状態も見る</div>
+    <div id="others"></div>
+
+    <button class="retry" onclick="resetQuiz()">もう一度診断する</button>
+  </div>
+
+</section>
+  <section class="panel" id="panel-3">
+  <div class="eyebrow">FEATURES</div>
+  <h1 class="page-title">AI Account Plan で変わる、<br>3つの局面</h1>
+  <p class="page-lead">重要アカウント攻略の3つの局面が、どう変わるかをご紹介します。</p>
+
+  <!-- 特徴① 集める -->
+  <div class="feat">
+    <div class="feat-no">01</div>
+    <span class="feat-step">顧客を深く理解する</span>
+    <div class="ba">
+      <div class="before">
+        <div class="lbl">BEFORE</div>
+        <div class="txt">情報が散在し、収集に時間がかかる</div>
+      </div>
+      <div class="ba-arrow">→</div>
+      <div class="after">
+        <div class="lbl">AFTER</div>
+        <div class="txt">提案前に、顧客理解の材料が揃う</div>
+      </div>
+    </div>
+    <p class="feat-body">必要な情報をAIが収集・整理し、事業課題・関心テーマ・意思決定構造を可視化。提案前に押さえるべき論点が、調べる前から見えています。</p>
+    <div class="diagram" id="dia1"></div>
+  </div>
+
+  <!-- 特徴② 描く -->
+  <div class="feat">
+    <div class="feat-no">02</div>
+    <span class="feat-step">アカウント攻略を設計する</span>
+    <div class="ba">
+      <div class="before">
+        <div class="lbl">BEFORE</div>
+        <div class="txt">攻略が担当者の経験頼みになる</div>
+      </div>
+      <div class="ba-arrow">→</div>
+      <div class="after">
+        <div class="lbl">AFTER</div>
+        <div class="txt">攻略ストーリーを、抜け漏れなく設計できる</div>
+      </div>
+    </div>
+    <p class="feat-body">顧客理解をもとに、誰に・何を・どの順で提案すべきかを整理。重要アカウントごとの勝ち筋を、構造化された攻略ストーリーとして設計できます。</p>
+    <div class="diagram" id="dia2"></div>
+  </div>
+
+  <!-- 特徴③ 動かす -->
+  <div class="feat">
+    <div class="feat-no">03</div>
+    <span class="feat-step">案件を前に進める</span>
+    <div class="ba">
+      <div class="before">
+        <div class="lbl">BEFORE</div>
+        <div class="txt">案件が停滞し、次の手が見えない</div>
+      </div>
+      <div class="ba-arrow">→</div>
+      <div class="after">
+        <div class="lbl">AFTER</div>
+        <div class="txt">次の一手が、明確になる</div>
+      </div>
+    </div>
+    <p class="feat-body">点在する情報を構造化し、停滞要因を可視化。意思決定を動かすための次のアクションが常に示され、案件を止めずに前へ進められます。</p>
+    <div class="diagram" id="dia3"></div>
+  </div>
+
+  <a class="next-cta" onclick="switchTab(4)">主要機能を詳しく見る →</a>
+  <a class="back-btn" onclick="switchTab(2)">← 課題チェックに戻る</a>
+</section>
+  <section class="panel" id="panel-4">
+  <div class="eyebrow">FEATURES</div>
+  <h1 class="page-title">AI Account Plan の主要機能</h1>
+  <p class="page-lead">顧客理解から提案・商談推進まで。各機能をタップすると、詳細と画面イメージが開きます。</p>
+
+  <div id="acc-list"></div>
+
+  <a class="next-cta" onclick="switchTab(5)">動画・デモ予約へ →</a>
+  <a class="back-btn" onclick="switchTab(3)">← 3つの特徴に戻る</a>
+</section>
+  <section class="panel" id="panel-5">
+  <div class="eyebrow">CONTACT</div>
+  <h1 class="page-title">AI Account Plan を、<br>もっと詳しく</h1>
+  <p class="page-lead">資料・デモ・動画をご用意しています。気になる導線からどうぞ。</p>
+  <div class="cta-card primary">
+    <div class="cta-tag">おすすめ</div>
+    <div class="cta-title">デモ・商談を予約する</div>
+    <p class="cta-desc">実際の画面で機能をご覧いただけます。導入のご相談も。</p>
+    <a class="cta-link" href="#" onclick="return false;">予約フォームへ →</a>
+  </div>
+  <div class="cta-card">
+    <div class="cta-title">製品資料をダウンロード</div>
+    <p class="cta-desc">機能一覧・活用イメージをまとめた資料をお送りします。</p>
+    <a class="cta-link" href="#" onclick="return false;">資料を受け取る →</a>
+  </div>
+  <div class="cta-card">
+    <div class="cta-title">紹介動画を見る</div>
+    <p class="cta-desc">3分でわかる、AI Account Plan の全体像。</p>
+    <a class="cta-link" href="#" onclick="return false;">動画を見る →</a>
+  </div>
+  <a class="back-btn" onclick="switchTab(4)">← 主要機能に戻る</a>
+</section>
+  <footer class="site-footer">
+    <div class="f1">AI Account Plan</div>
+    <div class="f2">© Sales Marker Co., Ltd.</div>
+  </footer>
+</div>
+<script>
+function switchTab(n){
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.toggle('active', p.id==='panel-'+n);});
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.toggle('active', t.dataset.tab==String(n));});
+  window.scrollTo({top:0,behavior:'instant'});
+}
+
+/* ===== 設問データ（5軸×2問＝10問） ===== */
+/* 選択肢は [③できている=2, ②途中=1, ①手薄=0] の順で score を持つ */
+const AXES = [
+  {id:'target', name:'対象',  full:'重要アカウントの見極め',  eng:'WHERE'},
+  {id:'under',  name:'理解',  full:'顧客理解の解像度',eng:'WHAT'},
+  {id:'strat',  name:'戦略',  full:'アカウント攻略の設計',        eng:'HOW'},
+  {id:'exec',   name:'実行',  full:'案件推進の確度',        eng:'DO'},
+  {id:'time',   name:'効率',  full:'AI活用による工数削減',  eng:'TIME'},
+];
+
+const QUESTIONS = [
+  {axis:'target', q:'注力すべきアカウントを、組織として<b>見極められて</b>いる',
+    opts:[['そう思う',2],['どちらとも',1],['そう思わない',0]]},
+  {axis:'target', q:'限られた時間を、重要アカウントに<b>優先的に割けて</b>いる',
+    opts:[['そう思う',2],['どちらとも',1],['そう思わない',0]]},
+
+  {axis:'under', q:'提案前に、<b>事業課題・関心テーマ</b>を深く掴めている',
+    opts:[['そう思う',2],['どちらとも',1],['そう思わない',0]]},
+  {axis:'under', q:'アカウント内の<b>「誰が・どう意思決定するか」</b>を把握できている',
+    opts:[['そう思う',2],['どちらとも',1],['そう思わない',0]]},
+
+  {axis:'strat', q:'<b>キーマン・決裁ルート</b>を踏まえた攻略シナリオを描けている',
+    opts:[['そう思う',2],['どちらとも',1],['そう思わない',0]]},
+  {axis:'strat', q:'受注に向けて<b>押さえるべき論点</b>に、抜け漏れなく目を配れている',
+    opts:[['そう思う',2],['どちらとも',1],['そう思わない',0]]},
+
+  {axis:'exec', q:'案件を前進させるために<b>「次にやるべきこと」が常に明確</b>である',
+    opts:[['そう思う',2],['どちらとも',1],['そう思わない',0]]},
+  {axis:'exec', q:'案件が<b>停滞しても、別ルートで前進</b>させられる',
+    opts:[['そう思う',2],['どちらとも',1],['そう思わない',0]]},
+
+  {axis:'time', q:'情報収集・整理・資料化などの<b>準備を、AIに任せられて</b>いる',
+    opts:[['そう思う',2],['どちらとも',1],['そう思わない',0]]},
+  {axis:'time', q:'<b>商談録画の解析やCRM入力</b>を、AIに任せられている',
+    opts:[['そう思う',2],['どちらとも',1],['そう思わない',0]]},
+];
+
+/* 軸ごとの結果テキスト（固有名詞は封印） */
+const AXIS_RESULT = {
+  target:{title:'「どこで勝つか」を、絞り切れていない',
+    state:'全案件が横並びで埋もれ、本当に勝つべき重要アカウントに時間を寄せられていない。',
+    ideal:'賭けるべき先が明確になり、限られた時間を重要案件に集中できている状態。'},
+  under:{title:'「顧客を理解する」ところで、止まっている',
+    state:'情報を集めるだけで時間が溶け、競合に勝てる深さに届く前に提案日が来てしまう。',
+    ideal:'理解に必要な情報が、調べる前から揃っている状態。'},
+  strat:{title:'理解はあっても、「勝ち筋」に変わっていない',
+    state:'掴んだ情報が頭の中に留まり、誰に・何を・どの順で攻めるかが言語化できていない。',
+    ideal:'顧客理解が、抜け漏れのない攻略ストーリーへ自然に変換される状態。'},
+  exec:{title:'描いた筋が、最後まで「進み切らない」',
+    state:'攻め筋はあるのに、案件が止まると次の一手が出ず、そこで前進が止まってしまう。',
+    ideal:'止まった案件にも次の一手が示され、前に進み続ける状態。'},
+  time:{title:'勝ち方より前に、「工数」で消耗している',
+    state:'集める・整理する・資料化する——その準備作業に、毎回まとまった時間が溶けていく。',
+    ideal:'準備作業をAIが巻き取り、人は考えること・決めることに集中できる状態。'},
+};
+
+const answers = new Array(QUESTIONS.length).fill(null);
+
+/* ===== 設問描画（軸ごとにグルーピング＋メーター） ===== */
+function renderQuestions(){
+  const wrap = document.getElementById('questions');
+  let html='';
+  AXES.forEach(axis=>{
+    html+=`<div class="q-group-head">${axis.full}</div>`;
+    QUESTIONS.forEach((item,qi)=>{
+      if(item.axis!==axis.id) return;
+      // opts は [できている=2, 途中=1, 手薄=0] の順 → メーターは左(手薄)→右(できている)で描くので reverse
+      const ordered=[...item.opts].reverse(); // [手薄0, 途中1, できている2]
+      html+=`<div class="q-row" id="row-${qi}">
+        <p class="q-text">${item.q}</p>
+        <div class="meter" role="radiogroup" aria-label="評価">
+          ${ordered.map((o,di)=>`
+            <button class="dot" data-q="${qi}" data-score="${o[1]}" data-di="${di}"
+              aria-label="${o[0]}" onclick="pick(${qi},${o[1]},${di})"></button>`).join('')}
+        </div>
+      </div>`;
+    });
+  });
+  wrap.innerHTML=html;
+}
+function pick(qi,score,di){
+  answers[qi]={score,di};
+  // 左から di番目まで点灯。左端(i=0)は常にグレー、それ以外はアンバー。
+  // → 点灯アンバーの数 = 点数（真ん中=1, 右=2, 左のみ=0）
+  document.querySelectorAll(`.dot[data-q="${qi}"]`).forEach((b,i)=>{
+    b.classList.toggle('on', i<=di);
+    b.classList.toggle('neg', i<=di && i===0);
+  });
+  document.getElementById('row-'+qi).classList.add('answered');
+  const done = answers.filter(Boolean).length;
+  document.getElementById('p-count').textContent = `回答済み ${done} / 10`;
+  document.getElementById('p-pct').textContent = `${Math.round(done/10*100)}%`;
+  document.getElementById('p-fill').style.width = `${done/10*100}%`;
+}
+
+/* ===== スコア計算 ===== */
+function computeAxisScores(){
+  const s={};
+  AXES.forEach(a=>s[a.id]=0);
+  QUESTIONS.forEach((item,qi)=>{ s[item.axis]+=(answers[qi]?answers[qi].score:0); }); // 未回答=0
+  return s;
+}
+
+/* ===== レーダー描画（5角形 SVG） ===== */
+function renderRadar(scores){
+  const size=300, cx=size/2, cy=size/2+6, R=90, levels=4;
+  const n=AXES.length;
+  const ang=i=>(-90 + i*360/n)*Math.PI/180;
+  const pt=(i,r)=>[cx+r*Math.cos(ang(i)), cy+r*Math.sin(ang(i))];
+
+  let grid='';
+  for(let l=1;l<=levels;l++){
+    const r=R*l/levels;
+    const pts=AXES.map((_,i)=>pt(i,r).join(',')).join(' ');
+    grid+=`<polygon points="${pts}" fill="none" stroke="#E5E7EB" stroke-width="1"/>`;
+  }
+  let spokes='';
+  AXES.forEach((_,i)=>{const[x,y]=pt(i,R);spokes+=`<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="#E5E7EB" stroke-width="1"/>`;});
+
+  const dataPts=AXES.map((a,i)=>pt(i,R*scores[a.id]/4).join(',')).join(' ');
+
+  let labels='';
+  AXES.forEach((a,i)=>{
+    const[x,y]=pt(i,R+22);
+    let anchor='middle';
+    if(x<cx-8)anchor='end'; if(x>cx+8)anchor='start';
+    labels+=`<text x="${x}" y="${y}" text-anchor="${anchor}" dominant-baseline="middle"
+      font-size="12" font-weight="700" fill="#00235d">${a.name}</text>`;
+    labels+=`<text x="${x}" y="${y+13}" text-anchor="${anchor}" dominant-baseline="middle"
+      font-size="9" font-weight="700" fill="#9CA3AF">${a.eng}</text>`;
+  });
+
+  let dots='';
+  AXES.forEach((a,i)=>{const[x,y]=pt(i,R*scores[a.id]/4);dots+=`<circle cx="${x}" cy="${y}" r="3.5" fill="#F59E0B"/>`;});
+
+  document.getElementById('radarWrap').innerHTML=`
+    <svg viewBox="0 0 ${size} ${size+24}" width="${size}" height="${size+24}" style="max-width:100%">
+      ${grid}${spokes}
+      <polygon points="${dataPts}" fill="rgba(245,158,11,.18)" stroke="#F59E0B" stroke-width="2"/>
+      ${dots}${labels}
+    </svg>`;
+}
+
+/* ===== 結果表示 ===== */
+function showResult(){
+  if(answers.filter(Boolean).length===0){
+    alert('1問以上、答えてから結果をご覧ください。');
+    return;
+  }
+  const scores=computeAxisScores();
+  const total=Object.values(scores).reduce((a,b)=>a+b,0); // 0〜20
+
+  // 最も手薄な軸（最低スコア）。同点は WHERE→WHAT→HOW→DO→TIME の順（AXES並び）で先勝ち
+  let weakest=AXES[0].id, min=Infinity;
+  AXES.forEach(a=>{ if(scores[a.id]<min){min=scores[a.id];weakest=a.id;} });
+
+  // 手薄な軸が2つ以上（スコア1以下が2軸以上）なら、全工程の基盤を主役に寄せる
+  const veryWeak=AXES.filter(a=>scores[a.id]<=1);
+  const allWeak = veryWeak.length>=3;
+
+  document.getElementById('quiz').style.display='none';
+  document.getElementById('result').style.display='block';
+  window.scrollTo(0,0);
+
+  // total animate
+  const numEl=document.getElementById('totalScore');
+  let cur=0; const step=Math.max(1,Math.round(total/20));
+  const tick=setInterval(()=>{cur+=step; if(cur>=total){cur=total;clearInterval(tick);} numEl.innerHTML=`${cur}<span>/20</span>`;},40);
+
+  renderRadar(scores);
+
+  // 主役カード
+  let spot;
+  if(allWeak){
+    spot={title:'勝ち切るプロセス全体で、時間が溶けている',
+      state:'集める・描く・進める——どの局面も個人頼みで、組織として勝ち切る土台がまだない。',
+      ideal:'全工程が止まらず回り続け、人は判断と意思決定に集中できる状態。'};
+  }else{
+    spot=AXIS_RESULT[weakest];
+  }
+  document.getElementById('spotlight').innerHTML=`
+    <div class="spotlight">
+      <div class="spot-eyebrow">${allWeak?'YOUR STATE':'最も手薄な視点'}</div>
+      <h2 class="spot-title">${spot.title}</h2>
+      <div class="spot-block">
+        <div class="spot-h">いまの状態</div>
+        <p class="spot-p">${spot.state}</p>
+        <div class="spot-arrow">↓</div>
+        <div class="spot-h">本来あるべき姿</div>
+        <p class="spot-p">${spot.ideal}</p>
+      </div>
+      <a class="spot-cta" href="#" onclick="goNext();return false;">では、どう実現するのか？ →</a>
+    </div>`;
+
+  // 他の軸（手薄な順、主役は除く）
+  const rest=AXES.filter(a=>allWeak?true:a.id!==weakest)
+    .sort((a,b)=>scores[a.id]-scores[b.id]);
+  document.getElementById('others').innerHTML=rest.map(a=>{
+    const pct=Math.round(scores[a.id]/4*100);
+    const r=AXIS_RESULT[a.id];
+    return `<div class="acc">
+      <button class="acc-head" onclick="this.parentNode.classList.toggle('open');toggleBody(this)">
+        <span class="acc-bar"><i style="width:${pct}%"></i></span>
+        <span class="acc-name">${a.name}：${a.full}</span>
+        <span class="acc-pct">${pct}%</span>
+        <span class="acc-chev">▾</span>
+      </button>
+      <div class="acc-body"><div class="inner">
+        <span class="state">${r.state}</span>
+      </div></div>
+    </div>`;
+  }).join('');
+}
+function toggleBody(btn){
+  const body=btn.nextElementSibling;
+  body.style.maxHeight = body.style.maxHeight ? '' : body.scrollHeight+'px';
+}
+function goNext(){ switchTab(3); }
+function skipToFeatures(){ goNext(); }
+function resetQuiz(){
+  answers.fill(null);
+  document.getElementById('result').style.display='none';
+  document.getElementById('quiz').style.display='block';
+  renderQuestions();
+  document.getElementById('p-count').textContent='回答済み 0 / 10';
+  document.getElementById('p-pct').textContent='0%';
+  document.getElementById('p-fill').style.width='0%';
+  window.scrollTo(0,0);
+}
+
+renderQuestions();
+
+
+/* 図解は実素材（スクショ）差し込み待ち。何が入るかを明示したプレースホルダー */
+const PLACEHOLDERS={
+  dia1:'パワーチャート ＋ 事業課題まとめ（事前準備資料）',
+  dia2:'アカウントプラン（攻略プランナー）',
+  dia3:'MEDDICC（攻略フレームワーク）',
+};
+Object.entries(PLACEHOLDERS).forEach(([id,label])=>{
+  document.getElementById(id).innerHTML=
+    `<div class="ph"><span class="ph-icon">▣</span><span class="ph-label">${label}</span><span class="ph-note">図版 差し込み予定</span></div>`;
+});
+
+
+const FEATURES=[
+  {
+    name:'次世代パワーチャート',
+    oneline:'組織構造・キーマン・決裁ルートを一枚で可視化',
+    desc:'アカウント内の人物の立場・関係性を可視化し、既存の接点からキーマンへの最短アプローチルートを複数パターンで設計。誰に・どの順で当たるべきかが、一目で分かります。',
+    demo:'キーマンと決裁ルートを一枚で把握。巻き込み順を設計できます。',
+    slides:['組織全体図（人物相関）', 'キーマンへの到達ルート', '人物詳細（決裁権・影響力）'],
+  },
+  {
+    name:'AI Meeting',
+    oneline:'商談録画をAIが解析し、要点を自動で構造化',
+    desc:'商談を録画・解析して議事録を自動生成。課題・ニーズ・論点などの重要要素を抽出し、次回商談の準備材料まで整えます。議事録づくりの手間をなくし、次アクションの抜け漏れを防ぎます。',
+    demo:'議事録づくりの手間をなくし、次アクションの抜け漏れを防ぎます。',
+    slides:['商談録画＋文字起こし', '要点の自動構造化', '次アクション抽出'],
+  },
+  {
+    name:'商談攻略プランナー（MEDDICC）',
+    oneline:'MEDDICCで、攻略に必要な論点を抜け漏れなく可視化',
+    desc:'複雑なB2B商談の評価フレームMEDDICCの各要素をAIがスコア化し、課題と決裁構造を可視化。受注確度とリスクを即時提示します。ヒアリング結果から、提案資料のドラフトまで作成します。',
+    demo:'重要アカウントごとの勝ち筋を、抜け漏れなく設計。担当の経験差をAIが埋めます。',
+    slides:['MEDDICC 概念図', '攻略プランナー画面', 'スコアリング・受注確度'],
+  },
+  {
+    name:'AIアクション',
+    oneline:'案件を前に進める「次の一手」を提示',
+    desc:'市場調査からクロージングまでを一気通貫で可視化し、各フェーズで取るべきアクションをAIが提示。停滞要因を捉え、案件を止めずに前へ進めます。',
+    demo:'「次に何をすべきか」を提示。停滞案件を動かします。',
+    slides:['フェーズ別アクション提示', '停滞検知→次の一手', 'シーケンス全体像'],
+  },
+];
+
+const list=document.getElementById('acc-list');
+list.innerHTML=FEATURES.map((f,i)=>`
+  <div class="acc" id="acc-${i}">
+    <button class="acc-head" onclick="toggleAcc(${i})">
+      <span class="acc-num">${i+1}</span>
+      <span class="acc-headmain">
+        <span class="acc-name">${f.name}</span>
+        <span class="acc-oneline">${f.oneline}</span>
+      </span>
+      <span class="acc-chev">▾</span>
+    </button>
+    <div class="acc-body">
+      <div class="inner">
+        <p class="acc-desc">${f.desc}</p>
+        <div class="demo-point">
+          <div class="lbl">DEMO POINT</div>
+          <div class="txt">${f.demo}</div>
+        </div>
+        <div class="carousel">
+          <div class="carousel-track" id="track-${i}" onscroll="onScroll(${i})">
+            ${f.slides.map(s=>`
+              <div class="slide">
+                <div class="ph"><span class="ph-icon">▣</span><span class="ph-label">${s}</span><span class="ph-note">GIF・画面イメージ 差し込み予定</span></div>
+              </div>`).join('')}
+          </div>
+          <div class="dots" id="dots-${i}">
+            ${f.slides.length>1 ? f.slides.map((_,si)=>`<button class="${si===0?'active':''}" onclick="goSlide(${i},${si})"></button>`).join('') : ''}
+          </div>
+          ${f.slides.length>1 ? '<div class="swipe-hint">← スワイプで次の画面 →</div>' : ''}
+        </div>
+      </div>
+    </div>
+  </div>`).join('');
+
+function toggleAcc(i){
+  const el=document.getElementById('acc-'+i);
+  const body=el.querySelector('.acc-body');
+  const open=el.classList.contains('open');
+  if(open){ el.classList.remove('open'); body.style.maxHeight=''; }
+  else{
+    el.classList.add('open');
+    const set=()=>{ body.style.maxHeight=body.scrollHeight+'px'; };
+    set();
+    // recompute once carousel images have loaded (lazy imgs report size late)
+    body.querySelectorAll('img').forEach(im=>{ if(!im.complete) im.addEventListener('load', set, {once:true}); });
+  }
+}
+function goSlide(i,si){
+  const track=document.getElementById('track-'+i);
+  const slide=track.children[si];
+  track.scrollTo({left:slide.offsetLeft-track.offsetLeft,behavior:'smooth'});
+}
+function onScroll(i){
+  const track=document.getElementById('track-'+i);
+  const idx=Math.round(track.scrollLeft/track.clientWidth);
+  const dots=document.getElementById('dots-'+i).children;
+  for(let d=0;d<dots.length;d++) dots[d].classList.toggle('active',d===idx);
+}
+
+</script>
+</body>
+</html>
