@@ -734,7 +734,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;padding:0;
     </div>
     <div class="sol-fv-video">
       <div class="sol-video-ph">
-        <iframe src="https://www.youtube.com/embed/MHY1IELsV-s" title="AI Choice とは" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        <iframe id="ytplayer" src="https://www.youtube.com/embed/MHY1IELsV-s?enablejsapi=1" title="AI Choice とは" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
       </div>
       <div class="sol-video-cap"><span class="sol-tag movie-tag">コンセプト動画</span><span class="sol-video-name">AI Choice とは（1分30秒）</span></div>
     </div>
@@ -1542,6 +1542,44 @@ function onScroll(i){
 
     gtag('event', 'content_click', params);
   }, true);
+})();
+
+/* ===== YouTube 動画の再生計測 =====
+   動画はクロスオリジン iframe のため通常のクリックでは捕捉できない。
+   IFrame Player API を読み込み、再生開始（PLAYING）を検知して GA4 に
+   video_play イベントを送る。＝実質「再生ボタンが押された回数」。
+   一時停止からの再開も PLAYING になるため play_count / first_play で区別可能。 */
+(function(){
+  if(!document.getElementById('ytplayer')) return;
+
+  var tag = document.createElement('script');
+  tag.src = 'https://www.youtube.com/iframe_api';
+  document.head.appendChild(tag);
+
+  var pageId = (location.pathname.match(/dig-flyer\/(\d+)/)||[])[1] || location.pathname;
+  var playCount = 0;
+
+  window.onYouTubeIframeAPIReady = function(){
+    new YT.Player('ytplayer', {
+      events: {
+        onStateChange: function(e){
+          if(e.data === YT.PlayerState.PLAYING && typeof gtag === 'function'){
+            playCount++;
+            gtag('event', 'video_play', {
+              click_id:      'video-ai-choice',
+              video_provider:'youtube',
+              video_id:      'MHY1IELsV-s',
+              video_title:   'AI Choice とは',
+              play_count:    playCount,        // このページ表示中の累計再生回数
+              first_play:    playCount === 1,  // 最初の再生か（純粋な再生開始の判別用）
+              page_id:       pageId,
+              page_path:     location.pathname
+            });
+          }
+        }
+      }
+    });
+  };
 })();
 
 </script>
