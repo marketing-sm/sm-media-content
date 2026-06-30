@@ -1530,7 +1530,7 @@ function onScroll(i){
     if(href) params.link_url = href;
     if(el.dataset){
       if(el.dataset.tab) params.tab = el.dataset.tab;                                            // タブ番号
-      if(el.dataset.q != null && el.dataset.q !== '')         params.question = el.dataset.q;    // 設問番号
+      if(el.dataset.q != null && el.dataset.q !== '')         params.question = String(Number(el.dataset.q) + 1); // 設問番号（1始まり）
       if(el.dataset.score != null && el.dataset.score !== '') params.score = el.dataset.score;   // 選択スコア
     }
 
