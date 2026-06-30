@@ -1502,6 +1502,42 @@ function onScroll(i){
   for(let d=0;d<dots.length;d++) dots[d].classList.toggle('active',d===idx);
 }
 
+/* ===== GA4 クリック計測 =====
+   クリック可能な全要素（a / button / onclick / role=button / role=tab）を
+   イベント委譲でまとめて捕捉し、GA4 に content_click イベントを送信する。
+   動的生成される設問の選択肢・カルーセルのドット等もカバーする。 */
+(function(){
+  var pageId = (location.pathname.match(/dig-flyer\/(\d+)/)||[])[1] || location.pathname;
+
+  function labelOf(el){
+    var t = (el.getAttribute('aria-label') || el.getAttribute('title') || el.textContent || '').replace(/\s+/g,' ').trim();
+    return t ? t.slice(0,100) : '(no text)';
+  }
+
+  // capture フェーズで捕捉し、onclick の return false 等に左右されず確実に送信する
+  document.addEventListener('click', function(e){
+    var el = e.target.closest('a, button, [onclick], [role="button"], [role="tab"]');
+    if(!el || typeof gtag !== 'function') return;
+
+    var params = {
+      page_id: pageId,
+      page_path: location.pathname,
+      element_tag: el.tagName.toLowerCase(),
+      element_text: labelOf(el),
+      element_class: (typeof el.className === 'string' ? el.className : '').trim()
+    };
+    var href = el.getAttribute('href');
+    if(href) params.link_url = href;
+    if(el.dataset){
+      if(el.dataset.tab) params.tab = el.dataset.tab;                                            // タブ番号
+      if(el.dataset.q != null && el.dataset.q !== '')         params.question = el.dataset.q;    // 設問番号
+      if(el.dataset.score != null && el.dataset.score !== '') params.score = el.dataset.score;   // 選択スコア
+    }
+
+    gtag('event', 'content_click', params);
+  }, true);
+})();
+
 </script>
 </body>
 </html>
