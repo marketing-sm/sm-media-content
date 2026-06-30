@@ -742,7 +742,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;padding:0;
 
   <div class="sol-section">
     <div class="sol-grid">
-      <div class="sol-card viewing">
+      <div class="sol-card viewing" data-ga="solution-ai-appointment">
 <div class="sol-thumb">
           <svg class="mesh" viewBox="0 0 460 259" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
 <g fill="none" stroke="#9DB4D8" stroke-linecap="round" stroke-linejoin="round">
@@ -877,7 +877,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;padding:0;
           <span class="sol-viewing-note">いま表示中のコンテンツです</span>
         </div>
       </div>
-      <a class="sol-card live" href="#" onclick="return false;">
+      <a class="sol-card live" href="#" data-ga="solution-ai-account-plan" onclick="return false;">
 <div class="sol-thumb">
           <svg class="mesh" viewBox="0 0 460 259" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
 <g fill="none" stroke="#9DB4D8" stroke-linecap="round" stroke-linejoin="round">
@@ -1012,7 +1012,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;padding:0;
           <span class="sol-cv">コンテンツを見る →</span>
         </div>
       </a>
-      <div class="sol-card soon">
+      <div class="sol-card soon" data-ga="solution-ai-enablement">
 <div class="sol-thumb soon-thumb">
           <svg class="mesh" viewBox="0 0 460 259" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
 <g fill="none" stroke="#9DB4D8" stroke-linecap="round" stroke-linejoin="round">
@@ -1147,7 +1147,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;padding:0;
           <span class="sol-soon-note">近日公開予定</span>
         </div>
       </div>
-      <a class="sol-card demo" href="#" onclick="return false;">
+      <a class="sol-card demo" href="#" data-ga="solution-demo-booking" onclick="return false;">
 <div class="sol-thumb demo-thumb">
           <svg class="demo-wave" viewBox="0 0 460 259" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke="#5AA0FF" stroke-opacity=".25" stroke-width="1.2"><path d="M0 150 Q115 110 230 150 T460 150"/><path d="M0 175 Q115 135 230 175 T460 175"/><path d="M0 200 Q115 160 230 200 T460 200"/></g></svg>
           <div class="thumb-ov demo-ov"><span class="thumb-ey">まずは相談</span><span class="thumb-nm demo-nm">AI活用について<br>詳しく聞く</span></div>
@@ -1516,7 +1516,7 @@ function onScroll(i){
 
   // capture フェーズで捕捉し、onclick の return false 等に左右されず確実に送信する
   document.addEventListener('click', function(e){
-    var el = e.target.closest('a, button, [onclick], [role="button"], [role="tab"]');
+    var el = e.target.closest('a, button, [onclick], [role="button"], [role="tab"], [data-ga]');
     if(!el || typeof gtag !== 'function') return;
 
     var params = {
