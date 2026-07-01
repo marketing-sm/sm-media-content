@@ -264,6 +264,10 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;padding:0;
 #panel-5 .sol-fv-video{min-width:0}
 #panel-5 .sol-video-ph{width:100%;aspect-ratio:16/9;border-radius:12px;background:var(--blue);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:#fff;position:relative;overflow:hidden;box-shadow:var(--box-shadow)}
 #panel-5 .sol-video-ph iframe,#panel-5 .sol-video-ph video{position:absolute;inset:0;width:100%;height:100%;border:0}
+#panel-5 .sol-video-ph{cursor:pointer}
+#panel-5 .sol-video-poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+#panel-5 .sol-video-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);border:0;background:none;padding:0;cursor:pointer;filter:drop-shadow(0 2px 8px rgba(0,0,0,.3));transition:transform .15s}
+#panel-5 .sol-video-ph:hover .sol-video-play{transform:translate(-50%,-50%) scale(1.08)}
 #panel-5 .sol-video-cap{display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap}
 #panel-5 .sol-video-name{font-size:11.5px;font-weight:700;color:var(--navy)}
 @media (max-width:560px){ #panel-5 .sol-fv{grid-template-columns:1fr;gap:16px} }
@@ -776,6 +780,10 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;padding:0;
     <div class="sol-fv-video">
       <div class="sol-video-ph">
         <iframe id="ytplayer" src="https://www.youtube.com/embed/MHY1IELsV-s?enablejsapi=1" title="Sales Marker AI Choice" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        <img class="sol-video-poster" src="/dig-flyer/ai-choice-thumb.png" alt="AI Choice｜課題に合わせてプロダクトが変化する" onerror="this.style.display='none'">
+        <button class="sol-video-play" type="button" aria-label="動画を再生">
+          <svg width="72" height="72" viewBox="0 0 72 72" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="36" cy="36" r="36" fill="rgba(255,255,255,.92)"/><path d="M29 24l20 12-20 12z" fill="#00235d"/></svg>
+        </button>
       </div>
       <div class="sol-video-cap"><span class="sol-tag movie-tag">コンセプト動画</span><span class="sol-video-name">Sales Marker AI Choice（1分30秒）</span></div>
     </div>
@@ -1593,7 +1601,8 @@ function onScroll(i){
    video_play イベントを送る。＝実質「再生ボタンが押された回数」。
    一時停止からの再開も PLAYING になるため play_count / first_play で区別可能。 */
 (function(){
-  if(!document.getElementById('ytplayer')) return;
+  var iframe = document.getElementById('ytplayer');
+  if(!iframe) return;
 
   var tag = document.createElement('script');
   tag.src = 'https://www.youtube.com/iframe_api';
@@ -1601,23 +1610,44 @@ function onScroll(i){
 
   var pageId = (location.pathname.match(/dig-flyer\/(\d+)/)||[])[1] || location.pathname;
   var playCount = 0;
+  var player = null;
+
+  // 自前サムネ（ポスター）＋再生ボタンをクリックしたら再生を開始し、サムネを隠す
+  var ph     = iframe.closest('.sol-video-ph');
+  var poster = ph ? ph.querySelector('.sol-video-poster') : null;
+  var playBt = ph ? ph.querySelector('.sol-video-play') : null;
+
+  function hidePoster(){
+    if(poster) poster.style.display = 'none';
+    if(playBt) playBt.style.display = 'none';
+  }
+
+  if(ph){
+    ph.addEventListener('click', function(){
+      hidePoster();
+      if(player && typeof player.playVideo === 'function') player.playVideo();
+    });
+  }
 
   window.onYouTubeIframeAPIReady = function(){
-    new YT.Player('ytplayer', {
+    player = new YT.Player('ytplayer', {
       events: {
         onStateChange: function(e){
-          if(e.data === YT.PlayerState.PLAYING && typeof gtag === 'function'){
-            playCount++;
-            gtag('event', 'video_play', {
-              click_id:      'video-ai-choice',
-              video_provider:'youtube',
-              video_id:      'MHY1IELsV-s',
-              video_title:   'Sales Marker AI Choice',
-              play_count:    playCount,        // このページ表示中の累計再生回数
-              first_play:    playCount === 1,  // 最初の再生か（純粋な再生開始の判別用）
-              page_id:       pageId,
-              page_path:     location.pathname
-            });
+          if(e.data === YT.PlayerState.PLAYING){
+            hidePoster();  // iframe 内の操作で再生された場合もサムネを隠す
+            if(typeof gtag === 'function'){
+              playCount++;
+              gtag('event', 'video_play', {
+                click_id:      'video-ai-choice',
+                video_provider:'youtube',
+                video_id:      'MHY1IELsV-s',
+                video_title:   'Sales Marker AI Choice',
+                play_count:    playCount,        // このページ表示中の累計再生回数
+                first_play:    playCount === 1,  // 最初の再生か（純粋な再生開始の判別用）
+                page_id:       pageId,
+                page_path:     location.pathname
+              });
+            }
           }
         }
       }
